@@ -40,6 +40,7 @@ H31             DAT 0
 read            PSH {LR}
                 MOV R2, #0 // Stores -1
                 SUB R2, #1
+                MOV R5, #0 // Used as counter
 
 read_l1         MOV R1, #0 // used to retain first charachter in memory on addres R0
                 JMS read_char
@@ -47,11 +48,8 @@ read_l1         MOV R1, #0 // used to retain first charachter in memory on addre
                 BEQ end_read 
                 LSL R1, R1, #8
                 STR R1, [R0]
-
-                LDR R4, CNT // increase counter
-                ADD R4, #1 
-                STR R4, CNT
-
+                ADD R5, #1 
+            
                 MOV R1, #0 // used to retain second charachter
                 LDR R3, [R0] // used as first char
                 JMS read_char
@@ -59,14 +57,12 @@ read_l1         MOV R1, #0 // used to retain first charachter in memory on addre
                 BEQ end_read
                 ORR R3, R3, R1
                 STR R3, [R0]
-                ADD R0, #1
-            
-                LDR R4, CNT // increase counter
-                ADD R4, #1 
-                STR R4, CNT 
-
+                ADD R0, #1    
+                ADD R5, #1 
+                
                 BRA read_l1
-end_read        POP {PC}
+end_read        STR R5, CNT
+                POP {PC}
 
 read_char       PSH {LR}
 
