@@ -122,7 +122,8 @@ append_length   PSH {LR}
 
 
 step_four       PSH {LR}
-                                
+
+                MOV R1, #0    // used as aux                                
                 MOV R2, #0    // used as aux                                
                 MOV R3, #32   // used as i
                 
@@ -202,13 +203,27 @@ step_four_l1    MOV R2, #160
                 ORR R4, R4, R6
                 ORR R5, R5, R7
 
+
+                // implement rotation
+                LSL R1, R4, #1
+                LSL R2, R5, #1
+
+                LSR R6, R4, #15
+                LSR R7, R5, #15
+
+
+                // do not swap R1 with R2
+                ORR R4, R2, R6
+                ORR R5, R1, R7
+
+                // store result on position start_adress + i
                 ADD R2, R0, R3
                 STR R4, [R2]
                 ADD R3, #1
 
                 ADD R2, R0, R3
                 STR R5, [R2]
-                ADD R3, #1
+                ADD R3, #1                
 
                 BRA step_four_l1
 
