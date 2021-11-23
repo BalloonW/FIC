@@ -9,11 +9,27 @@
                 LDR R0, END_ADRESS
                 LDR R1, CNT
                 JMS append_length
+
+                LDR R0, START_ADRESS
+                JMS step_four
+
                 HLT
         
-START_ADRESS    DAT 140
+START_ADRESS    DAT 200
 CNT             DAT 0
-END_ADRESS      DAT 172
+END_ADRESS      DAT 232
+
+
+// step one registers [H1 = Hx0 + Hx1]
+H00             DAT 0
+H01             DAT 0  
+H10             DAT 0
+H11             DAT 0
+H20             DAT 0
+H21             DAT 0
+H30             DAT 0
+H31             DAT 0
+
 
 
 // read characters and stop when encountre -1
@@ -102,3 +118,98 @@ append_length   PSH {LR}
                 MUL R1, #8
                 STR R1, [R0]
                 POP {PC}
+
+
+
+step_four       PSH {LR}
+                                
+                MOV R2, #0    // used as aux                                
+                MOV R3, #32   // used as i
+                
+step_four_l1    MOV R2, #160
+                CMP R3, R2      // loop until 160
+                BGT end_step_four
+
+
+                MOV R4, #0 // used as W1
+                MOV R5, #0 // used as W2
+
+                // find w(i-3) 
+                MOV R6, #0 
+                MOV R1, #6
+                SUB R6, R3, R1
+                ADD R6, R0
+                LDR R6, [R6]
+
+                MOV R7, #0 
+                MOV R1, #5
+                SUB R7, R3, R1 
+                ADD R7, R0
+                LDR R7, [R7]
+
+                // mov w(i-3) in 
+                MOV R4, R4
+                MOV R5, R5
+
+                // find w(i-8) 
+                MOV R6, #0 
+                MOV R1, #16
+                SUB R6, R3, R1 
+                ADD R6, R0
+                LDR R6, [R6]
+
+                MOV R7, #0 
+                MOV R1, #15
+                SUB R7, R3, R1 
+                ADD R7, R0
+                LDR R7, [R7]
+
+                // w(i-3) or w(i - 8)
+                ORR R4, R4, R6
+                ORR R5, R5, R7
+
+                // find w(i-14) 
+                MOV R6, #0 
+                MOV R1, #28
+                SUB R6, R3, R1
+                ADD R6, R0
+                LDR R6, [R6]
+
+                MOV R7, #0 
+                MOV R1, #27
+                SUB R7, R3, R1
+                ADD R7, R0
+                LDR R7, [R7]
+
+                // w(i-3) or w(i - 8) or w(i - 14)
+                ORR R4, R4, R6
+                ORR R5, R5, R7
+
+                // find w(i-16) 
+                MOV R6, #0 
+                MOV R1, #32
+                SUB R6, R3, R1
+                ADD R6, R0
+                LDR R6, [R6]
+
+                MOV R7, #0 
+                MOV R1, #31
+                SUB R7, R3, R1
+                ADD R7, R0
+                LDR R7, [R7]
+
+                // w(i-3) or w(i - 8) or w(i - 14) or w(i-15)
+                ORR R4, R4, R6
+                ORR R5, R5, R7
+
+                ADD R2, R0, R3
+                STR R4, [R2]
+                ADD R3, #1
+
+                ADD R2, R0, R3
+                STR R5, [R2]
+                ADD R3, #1
+
+                BRA step_four_l1
+
+end_step_four   POP {PC}                
