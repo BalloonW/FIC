@@ -1,8 +1,11 @@
                 LDR R0, START_ADRESS
                 JMS read
+                LDR R0, CNT
+                OUT R0, 4
                 HLT
             
     START_ADRESS    DAT 140
+    CNT             DAT 0
 
 
     // read characters and stop when encountre -1
@@ -19,7 +22,11 @@
                 CMP R1, R2 // if char = -1 end function
                 BEQ end_read 
                 LSL R1, R1, #8
-                STR R1, [R0] 
+                STR R1, [R0]
+
+                LDR R4, CNT // increase counter
+                ADD R4, #1 
+                STR R4, CNT
 
                 MOV R1, #0 // used to retain second charachter
                 LDR R3, [R0] // used as first char
@@ -29,7 +36,12 @@
                 ORR R3, R3, R1
                 STR R3, [R0]
                 ADD R0, #1
-                BRA read_l1 
+            
+                LDR R4, CNT // increase counter
+                ADD R4, #1 
+                STR R4, CNT 
+
+                BRA read_l1
     end_read    POP {PC}
 
     read_char   PSH {LR}
@@ -44,3 +56,6 @@
                 CMP R1, R4 // if number > 255 continue
                 BGT l1_input
                 POP {PC}
+
+
+
