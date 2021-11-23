@@ -5,10 +5,15 @@
                 OUT R0, 4
                 LDR R1, START_ADRESS
                 JMS append_one
+
+                LDR R0, END_ADRESS
+                LDR R1, CNT
+                JMS append_length
                 HLT
         
 START_ADRESS    DAT 140
 CNT             DAT 0
+END_ADRESS      DAT 172
 
 
 // read characters and stop when encountre -1
@@ -92,3 +97,8 @@ lsb_append_one  LSL R4, R4, #7
 
 end_append_one  POP {PC}
                 
+            
+append_length   PSH {LR}        
+                MUL R1, #8
+                STR R1, [R0]
+                POP {PC}
