@@ -98,14 +98,14 @@ append_one      PSH {LR}
                 BRA lsb_append_one
 
 msb_append_one  LSL R4, R4, #15 
-                ADD R5, R1, R2 // R5 - register where to put append 1
+                ADD R5, R1, R2 // R5 - register where to append 1
                 LDR R6, [R5]
                 ORR R4, R4, R6
                 STR R4, [R5]
                 BRA end_append_one
 
 lsb_append_one  LSL R4, R4, #7
-                ADD R5, R1, R2 // R5 - register where to put append 1
+                ADD R5, R1, R2 // R5 - register where to append 1
                 LDR R6, [R5]
                 ORR R4, R4, R6
                 STR R4, [R5]
@@ -131,18 +131,15 @@ step_four_l1    MOV R2, #160
                 CMP R3, R2      // loop until 160
                 BGT end_step_four
 
-
                 MOV R4, #0 // used as W1
                 MOV R5, #0 // used as W2
 
-                // find w(i-3) 
-                MOV R6, #0 
+                // find w(i-3)                 
                 MOV R1, #6
                 SUB R6, R3, R1
                 ADD R6, R0
                 LDR R6, [R6]
 
-                MOV R7, #0 
                 MOV R1, #5
                 SUB R7, R3, R1 
                 ADD R7, R0
@@ -153,13 +150,11 @@ step_four_l1    MOV R2, #160
                 MOV R5, R5
 
                 // find w(i-8) 
-                MOV R6, #0 
                 MOV R1, #16
                 SUB R6, R3, R1 
                 ADD R6, R0
                 LDR R6, [R6]
 
-                MOV R7, #0 
                 MOV R1, #15
                 SUB R7, R3, R1 
                 ADD R7, R0
@@ -170,13 +165,11 @@ step_four_l1    MOV R2, #160
                 ORR R5, R5, R7
 
                 // find w(i-14) 
-                MOV R6, #0 
                 MOV R1, #28
                 SUB R6, R3, R1
                 ADD R6, R0
                 LDR R6, [R6]
 
-                MOV R7, #0 
                 MOV R1, #27
                 SUB R7, R3, R1
                 ADD R7, R0
@@ -187,13 +180,11 @@ step_four_l1    MOV R2, #160
                 ORR R5, R5, R7
 
                 // find w(i-16) 
-                MOV R6, #0 
                 MOV R1, #32
                 SUB R6, R3, R1
                 ADD R6, R0
                 LDR R6, [R6]
 
-                MOV R7, #0 
                 MOV R1, #31
                 SUB R7, R3, R1
                 ADD R7, R0
@@ -202,7 +193,6 @@ step_four_l1    MOV R2, #160
                 // w(i-3) or w(i - 8) or w(i - 14) or w(i-15)
                 ORR R4, R4, R6
                 ORR R5, R5, R7
-
 
                 // implement rotation
                 LSL R1, R4, #1
