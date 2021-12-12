@@ -367,7 +367,20 @@ SUMA 			LDR R1, E00
 				BRA ADD_K1 // se calculeaza dupa a treia implementare
 SUMA_CONT		ADD R5, R5, R2
 				ADC R4, R4, R1
-				// adaugam S^5(A) - PROBLEM 
+				// adaugam S^5(A)
+				LSL R1, R4, #5
+                LSL R2, R5, #5
+
+                LSR R6, R4, #30
+                LSR R7, R5, #30
+
+                // do not swap R1 with R2
+                ORR R2, R2, R6
+                ORR R1, R1, R7
+				
+				ADD R5, R5, R2
+				ADC R4, R4, R1
+				BRA step_six 
 				
 
 ADD_K1			LDR R1, K10
