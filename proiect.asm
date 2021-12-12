@@ -33,8 +33,8 @@ H20             DAT 286
 H21             DAT 61916
 H30             DAT 52719
 H31             DAT 9129
-H40				DAT 0
-H41				DAT 0
+H40				DAT 37523
+H41				DAT 59874
 
 // step five copy registers H to ABCD
 A00             DAT 26590
@@ -45,6 +45,18 @@ C00             DAT 286
 C01             DAT 61916
 D00             DAT 52719
 D01             DAT 9129
+E00				DAT 37523
+E01				DAT 59874
+
+// K values 
+K10				DAT 23170
+K11				DAT	31129
+K20				DAT 28377
+K21				DAT 60321
+K30				DAT 36635
+K31				DAT 48348
+K40				DAT 51810
+K41				DAT 49622
 
 
 // read characters and stop when encountre -1
@@ -254,7 +266,7 @@ step_six 		PSH {LR}
 				BGT F_FIRST
 				BRA F_THIRD // se calculeaza dupa a treia implementare
 				
-				// for B xor C xor D
+				// B xor C xor D
 				// result in R4, R5 
 F_FIRST			LDR R4, B00
 				LDR R5, C00
@@ -268,7 +280,7 @@ F_FIRST			LDR R4, B00
 				XOR R5, R5, R2 // xor D (second step)
 				BRA SUMA
 				
-				// for (B and C) or (B and D) or (C and D)
+				// (B and C) or (B and D) or (C and D)
 				// result in R4, R5
 F_SECOND		LDR R4, B00
 				LDR R2, C00
@@ -302,6 +314,8 @@ F_SECOND		LDR R4, B00
 				OR R5, R5, R2
 				BRA SUMA
 				
+				//  (B ∧ C)∨((¬B)∧D)
+				// result in R4, R5
 F_THIRD			LDR R4, B00
 				LDR R2, C00
 				OR R4, R4, R2 // save in R4
@@ -327,4 +341,51 @@ F_THIRD			LDR R4, B00
 				AND R5, R5, R2
 				BRA SUMA 
 				
-SUMA 			
+				// avem f in R4, R5
+				// adaugam E 
+SUMA 			LDR R1, E00
+				LDR R2, E01
+				ADD R5, R5, R2 
+				ADC R4, R4, R1 // adaugam cu carry 
+				// adaugam W(i)
+				LDR R1, [R3] // incarcam prima parte de w(i)
+				ADD R3, #1 // incrementam 
+				LDR R2, [R3] // incarcam a doua parte 
+				ADD R3, #1 // incrementare finala 
+				ADD R5, R5, R2
+				ADC R4, R4, R1 
+				// adaugam K(i)
+				MOV R6, #19 
+				CMP R3, R6 
+				BGT ADD_K2 // se calculeaza dupa prima implementare 
+				MOV R6, #39
+				CMP R3, R6
+				BGT ADD_K3 // se calculeaza dupa a doua implementare
+				MOV R6, #59
+				CMP R3, R6
+				BGT ADD_K4
+				BRA ADD_K1 // se calculeaza dupa a treia implementare
+SUMA_CONT		ADD R5, R5, R2
+				ADC R4, R4, R1
+				// adaugam S^5(A) - PROBLEM 
+				
+
+ADD_K1			LDR R1, K10
+				LDR R2, K11
+				BRA SUMA_CONT
+				
+ADD_K2			LDR R1, K20
+				LDR R2, K21
+				BRA SUMA_CONT
+				
+ADD_K3			LDR R1, K30
+				LDR R2, K31
+				BRA SUMA_CONT
+				
+ADD_K4			LDR R1, K40
+				LDR R2, K41
+				BRA SUMA_CONT
+			
+				
+
+end_step_six 	POP {PC}
