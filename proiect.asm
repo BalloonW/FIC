@@ -10,6 +10,8 @@
         LDR R0, START_ADRESS
         JMS step_four
         LDR R0, START_ADRESS 
+		JMS step_six 
+		JMS step_seven
         HLT
 START_ADRESS DAT 200
 CNT     DAT 0
@@ -74,6 +76,7 @@ read_l1 MOV R1, #0 // used to retain first charachter in memory on addres R0
         BRA read_l1
 end_read STR R5, CNT
         POP {PC}
+		RET 
 read_char PSH {LR}
         MOV R5, #0 // stores -1
         SUB R5, #1
@@ -106,6 +109,7 @@ lsb_append_one LSL R4, R4, #7
         STR R4, [R5]
         BRA end_append_one
 end_append_one POP {PC}
+			   RET 
 append_length PSH {LR} 
         MUL R1, #8
         STR R1, [R0]
@@ -184,6 +188,7 @@ step_four_l1 MOV R2, #160
         ADD R3, #1 
         BRA step_four_l1
 end_step_four POP {PC} 
+			  RET 
 step_six PSH {LR}
         MOV R1, #0 // used as aux 
         MOV R2, #0 // used as aux 
@@ -303,15 +308,32 @@ SUMA    LDR R1, E00
 SUMA_CONT ADD R5, R5, R2
         ADC R4, R1
 // adaugam S^5(A)
-        LSL R1, R4, #5
+// trebuie sa ma mai gandesc la acest pas, pentru ca nu pare a fi corect 
+        LSL R1, R4, #5 
         LSL R2, R5, #5
-        LSR R6, R4, #30
-        LSR R7, R5, #30
+        LSR R6, R4, #10
+        LSR R7, R5, #10
 // do not swap R1 with R2
         ORR R2, R2, R6
         ORR R1, R1, R7
         ADD R5, R5, R2
         ADC R4, R1
+		
+		// reassign the values 
+		LDR R1, D00
+		LDR R2, D01
+		STR R1, E00
+		STR R2, E01
+		LDR R1, C00
+		LDR R2, C01
+		STR R1, D00
+		STR R2, D01
+		LDR R1, A00
+		LDR R2, A01
+		STR R1, B00
+		STR R2, B01
+		STR R4, A00
+		STR R5, A01	
         BRA step_six 
 ADD_K1  LDR R1, K10
         LDR R2, K11
@@ -326,3 +348,38 @@ ADD_K4  LDR R1, K40
         LDR R2, K41
         BRA SUMA_CONT
 end_step_six POP {PC}
+			 RET 
+
+step_seven PSH {LR}
+		LDR R1, H00
+		LDR R2, H01
+		LDR R3, A00
+		LDR R4, A01
+		ADD R4, R4, R2
+		ADC R3, R1
+		LDR R1, H10
+		LDR R2, H11
+		LDR R3, B00
+		LDR R4, B01
+		ADD R4, R4, R2
+		ADC R3, R1
+		LDR R1, H20
+		LDR R2, H21
+		LDR R3, C00
+		LDR R4, C01
+		ADD R4, R4, R2
+		ADC R3, R1
+		LDR R1, H30
+		LDR R2, H31
+		LDR R3, D00
+		LDR R4, D01
+		ADD R4, R4, R2
+		ADC R3, R1
+		LDR R1, H40
+		LDR R2, H41
+		LDR R3, E00
+		LDR R4, E01
+		ADD R4, R4, R2
+		ADC R3, R1
+end_step_seven POP {PC}
+			   RET 
