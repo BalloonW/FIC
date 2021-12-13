@@ -437,7 +437,7 @@ step_seven      PSH {LR}
                 ADD R4, R4, R2
                 ADC R3, R1
 
-                INP R0, 2
+                
                 OUT R4, 6
                 OUT R3, 6
 
@@ -469,7 +469,7 @@ step_seven      PSH {LR}
                 ADC R3, R1
 
                 OUT R4, 6
-               // OUT R3, 6
+                OUT R3, 6
 end_step_seven  POP {PC}
 
 put_zero        PSH {LR}   
