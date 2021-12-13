@@ -103,13 +103,9 @@ append_one      PSH {LR}
                 BEQ msb_append_one
                 BRA lsb_append_one
 msb_append_one  LSL R4, R4, #15 
-                ADD R5, R1, R2 // R5 - register where to append 1
-                LDR R6, [R5]
-                ORR R4, R4, R6
-                STR R4, [R5]
-                BRA end_append_one
+                BRA cont_append
 lsb_append_one  LSL R4, R4, #7
-                ADD R5, R1, R2 // R5 - register where to append 1
+cont_append     ADD R5, R1, R2 // R5 - register where to append 1
                 LDR R6, [R5]
                 ORR R4, R4, R6
                 STR R4, [R5]
