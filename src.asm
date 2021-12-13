@@ -115,63 +115,29 @@ append_length   PSH {LR}
                 MUL R1, #8
                 STR R1, [R0]
                 POP {PC}
+
 step_four       PSH {LR}
                 MOV R1, #0 // used as aux 
                 MOV R2, #0 // used as aux 
-                MOV R3, #32 // used as i
+                MOV R3, #32 
+
 step_four_l1    MOV R2, #160
                 CMP R3, R2 // loop until 160
                 BGT end_step_four
-                MOV R4, #0 // used as W1
-                MOV R5, #0 // used as W2
-                // find w(i-3) 
-                MOV R1, #6
-                SUB R6, R3, R1
-                ADD R6, R0
-                LDR R6, [R6]
-                MOV R1, #5
-                SUB R7, R3, R1 
-                ADD R7, R0
-                LDR R7, [R7]
-                // mov w(i-3) in 
-                MOV R4, R6
-                MOV R5, R7
-                            // find w(i-8) 
-                MOV R1, #16
-                SUB R6, R3, R1 
-                ADD R6, R0
-                LDR R6, [R6]
-                MOV R1, #15
-                SUB R7, R3, R1 
-                ADD R7, R0
-                LDR R7, [R7]
-                // w(i-3) or w(i - 8)
-                XOR R4, R4, R6
-                XOR R5, R5, R7
-                // find w(i-14) 
-                MOV R1, #28
-                SUB R6, R3, R1
-                ADD R6, R0
-                LDR R6, [R6]
-                MOV R1, #27
-                SUB R7, R3, R1
-                ADD R7, R0
-                LDR R7, [R7]
-                // w(i-3) or w(i - 8) or w(i - 14)
-                XOR R4, R4, R6
-                XOR R5, R5, R7
-                // find w(i-16) 
-                MOV R1, #32
-                SUB R6, R3, R1
-                ADD R6, R0
-                LDR R6, [R6]
-                MOV R1, #31
-                SUB R7, R3, R1
-                ADD R7, R0
-                LDR R7, [R7]
-                // w(i-3) or w(i - 8) or w(i - 14) or w(i-15)
-                XOR R4, R4, R6
-                XOR R5, R5, R7
+
+                // calculate w(i-3) xor w(i-8)  xor w(i-14) xor w(i-16) 
+                // for W1
+                JMS stp4_heplper
+                MOV R7, R4
+
+                // calculate w(i-3) xor w(i-8)  xor w(i-14) xor w(i-16) 
+                // for W2
+                ADD R3, #1 
+                JMS stp4_heplper
+                
+                MOV R5, R4
+                MOV R4, R7
+
                 // implement rotation
                 LSL R1, R4, #1
                 LSL R2, R5, #1
@@ -180,15 +146,52 @@ step_four_l1    MOV R2, #160
                 // do not swap R1 with R2
                 ORR R4, R2, R6
                 ORR R5, R1, R7
+
                 // store result on position start_adress + i
                 ADD R2, R0, R3
-                STR R4, [R2]
-                ADD R3, #1
+                SUB R2, #1
+                STR R4, [R2]                
                 ADD R2, R0, R3
                 STR R5, [R2]
                 ADD R3, #1 
                 BRA step_four_l1
+
 end_step_four   POP {PC} 
+
+                
+
+stp4_heplper    PSH {LR}
+                MOV R4, #0 // used as hatf W
+                // find w(i-3) 
+                MOV R1, #6
+                SUB R6, R3, R1
+                ADD R6, R0
+                LDR R6, [R6]
+                // mov w(i-3) in R4
+                MOV R4, R6
+                // find w(i-8) 
+                MOV R1, #16
+                SUB R6, R3, R1 
+                ADD R6, R0
+                LDR R6, [R6]
+                // w(i-3) or w(i - 8)
+                XOR R4, R4, R6
+                // find w(i-14) 
+                MOV R1, #28
+                SUB R6, R3, R1
+                ADD R6, R0
+                LDR R6, [R6]
+                // w(i-3) or w(i - 8) or w(i - 14)
+                XOR R4, R4, R6
+                // find w(i-16) 
+                MOV R1, #32
+                SUB R6, R3, R1
+                ADD R6, R0
+                LDR R6, [R6]
+                // w(i-3) or w(i - 8) or w(i - 14) or w(i-15)
+                XOR R4, R4, R6
+                POP {PC}
+
 
 step_six        PSH {LR}
                 MOV R1, #0 // used as aux 
@@ -210,6 +213,7 @@ step_six        PSH {LR}
                 CMP R3, R6
                 BGT F_FIRST
                 BRA F_THIRD // se calculeaza dupa a treia implementare
+
                 // B xor C xor D
                 // result in R4, R5 
 F_FIRST         LDR R4, B00
@@ -223,6 +227,7 @@ F_FIRST         LDR R4, B00
                 LDR R2, D01
                 XOR R5, R5, R2 // xor D (second step)
                 BRA SUMA
+
                 // (B and C) or (B and D) or (C and D)
                 // result in R4, R5
 F_SECOND        LDR R4, B00
@@ -256,6 +261,7 @@ F_SECOND        LDR R4, B00
                 LDR R2, AUX2
                 ORR R5, R5, R2
                 BRA SUMA
+
                 // (B ∧ C)∨((¬B)∧D)
                 // result in R4, R5
 F_THIRD         LDR R4, B00
@@ -282,6 +288,7 @@ F_THIRD         LDR R4, B00
                 LDR R2, AUX2
                 AND R5, R5, R2
                 BRA SUMA 
+                
                 // avem f in R4, R5
                 // adaugam E 
 SUMA            LDR R1, E00
@@ -348,6 +355,7 @@ ADD_K4          LDR R1, K40
                 LDR R2, K41
                 BRA SUMA_CONT
 end_step_six    POP {PC}
+
 
 step_seven      PSH {LR}
                 LDR R1, H00
