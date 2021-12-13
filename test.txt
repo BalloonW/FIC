@@ -1,0 +1,13 @@
+
+count       PSH {LR}
+            MOV R2, #0 // used as counter
+            MOV R3, #0 // store -1
+            SUM R3, #1 
+            
+count_l1    MOV R1, [R0]
+            CMP R1, R3 
+            BEQ cound_end
+            ADD R2, #1
+            BRA cound_l1
+end_count   STR R2, CNT 
+            POP {PC}
