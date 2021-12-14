@@ -4,10 +4,12 @@
                 LDR R0, CNT
                 LDR R1, START_ADRESS 
                 JMS append_one
-                MOV R0, #82 //end_addres
-                LDR R1, CNT
-                JMS append_length
                 JMS put_zero
+                MOV R0, #214 //end_addres
+                LDR R1, CNT
+                //append_length
+                STR R1, [R0]
+
                 LDR R0, START_ADRESS 
                 JMS step_four
                 LDR R0, START_ADRESS 
@@ -100,6 +102,14 @@ BLANK35             DAT 0
 BLANK36             DAT 0
 BLANK37             DAT 0
 BLANK38             DAT 0
+BLANK39             DAT 0
+BLANK40             DAT 0
+BLANK41             DAT 0
+BLANK42             DAT 0
+BLANK43             DAT 0
+BLANK44             DAT 0
+BLANK45             DAT 0
+
 
 
 
@@ -228,8 +238,6 @@ l1_input        INP R1, 2 // input charachter
                 POP {PC}
 
 append_one      PSH {LR}
-                MOV R2, R0
-                UDV R2, #2
                 MOV R3, R0
                 MOD R3, #2 
                 MOV R4, #1 // stores one
@@ -245,10 +253,6 @@ cont_append     ADD R5, R1, R2 // R5 - register where to append 1
                 STR R4, [R5]
 end_append_one  POP {PC}
 
-append_length   PSH {LR} 
-                MUL R1, #8
-                STR R1, [R0]
-                POP {PC}
 
 step_four       PSH {LR}
                 MOV R3, #32 
@@ -331,6 +335,7 @@ step_six_l      MOV R2, #160 // loop until 160
                 CMP R3, R2
                 BGT end_step_six
                 
+
                 // gasim f de care avem nevoie
                 MOV R6, #19 
                 CMP R3, R6 
@@ -343,14 +348,14 @@ step_six_l      MOV R2, #160 // loop until 160
                 BGT s_f1
                 LDR R4, F20
                 LDR R5, F21
-                BRA switch_cont
+                BRA switch_cont                
 
 s_f1            LDR R4, F00
                 LDR R5, F01
                 BRA switch_cont
 s_f2            LDR R4, F10
                 LDR R5, F11
-                BRA switch_cont
+
 
                 // adaguam E
 switch_cont     LDR R1, E00
@@ -427,8 +432,10 @@ step_seven      PSH {LR}
                 ADD R4, R4, R2
                 ADC R3, R1
 
-                OUT R4, 6
-                OUT R3, 6
+                STR R4, H00
+                STR R3, H01
+                //OUT R4, 6
+                //OUT R3, 6
 
                 LDR R1, H10
                 LDR R2, H11
@@ -438,8 +445,10 @@ step_seven      PSH {LR}
                 ADC R3, R1
 
                 
-                OUT R4, 6
-                OUT R3, 6
+                STR R4, H00
+                STR R3, H01
+                //OUT R4, 6
+                //OUT R3, 6
 
                 LDR R1, H20
                 LDR R2, H21
@@ -448,8 +457,10 @@ step_seven      PSH {LR}
                 ADD R4, R4, R2
                 ADC R3, R1
 
-                OUT R4, 6
-                OUT R3, 6
+                STR R4, H00
+                STR R3, H01
+                //OUT R4, 6
+                //OUT R3, 6
 
                 LDR R1, H30
                 LDR R2, H31
@@ -458,8 +469,10 @@ step_seven      PSH {LR}
                 ADD R4, R4, R2
                 ADC R3, R1
 
-                OUT R4, 6
-                OUT R3, 6
+                STR R4, H00
+                STR R3, H01
+                //OUT R4, 6
+                //OUT R3, 6
 
                 LDR R1, H40
                 LDR R2, H41
@@ -468,8 +481,10 @@ step_seven      PSH {LR}
                 ADD R4, R4, R2
                 ADC R3, R1
 
-                OUT R4, 6
-                OUT R3, 6
+                STR R4, H00
+                STR R3, H01
+                //OUT R4, 6
+                //OUT R3, 6
 end_step_seven  POP {PC}
 
 put_zero        PSH {LR}   
